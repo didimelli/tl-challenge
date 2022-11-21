@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "tl-challenge"
+version = "0.1.0"
+description = ""
+authors = ["didi <didi@leaf.space>"]
+readme = "README.md"
+packages = [{include = "tl_challenge"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.87.0"
+trio = "^0.22.0"
+httpx = "^0.23.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.10.0"
+mypy = "^0.991"
+pre-commit = "^2.20.0"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+pylint = "^2.15.6"
+perflint = "^0.7.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
