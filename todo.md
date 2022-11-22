@@ -1,6 +1,7 @@
 - [ ] dockerfile
 - [ ] ci with actions
 - [ ] dedicated error whenm e.g. 404 is given by 3rd party api
+- [ ] add readme
 - [x] mock external api in test
 - [x] sanitize description string?
 - [x] make sure to use english description, not just the first
