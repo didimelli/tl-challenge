@@ -39,3 +39,17 @@ class BasicInfo(BaseModel):
             habitat=res["habitat"]["name"],
             is_legendary=res["is_legendary"],
         )
+
+
+class BasicInfoTranslated(BasicInfo):
+    """Same as basic info but contains information about whether the info has
+    been translated."""
+
+    translated: bool
+
+    @classmethod
+    def from_basic_info(
+        cls, info: BasicInfo, translated: bool
+    ) -> "BasicInfoTranslated":
+        """Builds the object from the basic info object."""
+        return cls(**info.dict(), translated=translated)

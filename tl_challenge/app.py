@@ -10,6 +10,7 @@ from httpx import AsyncClient
 from httpx import HTTPStatusError
 
 from tl_challenge.models import BasicInfo
+from tl_challenge.models import BasicInfoTranslated
 
 app = FastAPI()
 POKE_API = "https://pokeapi.co/api/v2"
@@ -34,7 +35,7 @@ async def get_translated_description(
     )
     # ! check status code for rate limit!
     if res.status_code == 429:
-        return description
+        raise HTTPStatusError("rate limiting hit", request=res.request, response=res)
     if res.is_success:
         return res.json()["contents"]["translated"]
     res.raise_for_status()
@@ -56,28 +57,32 @@ async def get_basic_pokemon_information(pokemon_name: str):
 
 
 @app.get("/pokemon/translated/{pokemon_name}")
-async def get_basic_pokemon_information_translated(pokemon_name: str) -> BasicInfo:
+async def get_basic_pokemon_information_translated(
+    pokemon_name: str,
+) -> BasicInfoTranslated:
     """Same as the other endpoint, but this time apply some transformation."""
     async with AsyncClient() as client:
         try:
             info = await get_basic_information(client, pokemon_name)
             if info is None:
                 raise HTTPException(status_code=500, detail="No response from pokeapi.")
+            translated = False
             try:
                 if info.habitat == "cave":
                     new_description = await get_translated_description(
                         client, info.description, "yoda.json"
                     )
+                    translated = True
                 else:
                     new_description = await get_translated_description(
                         client, info.description, "shakespeare.json"
                     )
+                    translated = True
             except HTTPStatusError:
                 new_description = info.description
             if new_description is None:
-                print("magari passo da qua??")
                 new_description = info.description
             info.description = new_description
-            return info
+            return BasicInfoTranslated.from_basic_info(info, translated)
         except HTTPStatusError as e:
             raise HTTPException(status_code=e.response.status_code) from e
