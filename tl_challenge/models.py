@@ -1,5 +1,6 @@
 """Here the models are defined."""
 import random
+import string
 from typing import Any
 
 from pydantic import BaseModel
@@ -29,9 +30,12 @@ class BasicInfo(BaseModel):
         ]
         if not english_descriptions:
             raise ValueError("No english translation found.")
+        description = random.choice(english_descriptions)
         return cls(
             name=res["name"],
-            description=random.choice(english_descriptions),
+            description="".join(
+                ch if ch not in string.whitespace else " " for ch in description
+            ),
             habitat=res["habitat"]["name"],
             is_legendary=res["is_legendary"],
         )
