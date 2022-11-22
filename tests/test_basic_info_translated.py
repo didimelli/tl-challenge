@@ -1,27 +1,37 @@
 # pylint: disable=redefined-outer-name
 
-from typing import Generator
 
 from fastapi.testclient import TestClient
-from pytest import fixture
-
-from tl_challenge.app import app
+from respx import MockRouter
 
 
-@fixture
-def client() -> Generator[TestClient, None, None]:
-    """Yields a testing client."""
-    yield TestClient(app)
-
-
-def test_basic_endpoint(client: TestClient) -> None:
+def test_basic_endpoint_translated(
+    client: TestClient, mock_pokeapi: MockRouter, mock_funtranslation_api: MockRouter
+) -> None:
     """Tests basic endpoint behaviour."""
-    res = client.get("/pokemon/translated/mew")
+    # use diglett because its habitat is cave and triggers yoda translation
+    # that is mocked to give 200
+    res = client.get("/pokemon/translated/diglett")
     assert res.status_code == 200
     assert res.json() == {
-        "name": "mew",
-        "description": "So rare yond 't is still did doth sayeth to beest "
-        "a mirage by many experts. Only a few people hath't seen 't worldwide.",
-        "habitat": "rare",
+        "name": "diglett",
+        "description": "translated text",
+        "habitat": "cave",
         "isLegendary": False,
+        "translated": True,
     }
+
+
+def test_basic_endpoint_translated_rate_limited(
+    client: TestClient, mock_pokeapi: MockRouter, mock_funtranslation_api: MockRouter
+) -> None:
+    """Tests basic endpoint behaviour when rate limit is triggered."""
+    # use mewtwo because its habitat is not cave and triggers shakespeare translation
+    # that is mocked to give 429
+    res = client.get("/pokemon/translated/mewtwo")
+    assert res.status_code == 200
+    assert res.json()["name"] == "mewtwo"
+    assert res.json()["habitat"] == "rare"
+    assert res.json()["isLegendary"] is True
+    assert res.json()["translated"] is False
+    assert res.json()["description"] != "translated text"

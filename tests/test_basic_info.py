@@ -1,33 +1,39 @@
-# pylint: disable=redefined-outer-name
+# pylint: disable=redefined-outer-name, unused-argument
 
-from typing import Generator
-
+import pytest
 from fastapi.testclient import TestClient
-from pytest import fixture
+from httpx import AsyncClient
+from respx import MockRouter
 
-from tl_challenge.app import app
-
-
-@fixture
-def client() -> Generator[TestClient, None, None]:
-    """Yields a testing client."""
-    yield TestClient(app)
+from tl_challenge.app import get_basic_information
+from tl_challenge.models import BasicInfo
 
 
-def test_basic_endpoint(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_get_basic_information(
+    mock_pokeapi: MockRouter,
+) -> None:
+    """Tests that basic information retrieval from pokeapi works, mocking
+    pokeapi service."""
+    async with AsyncClient() as client:
+        res = await get_basic_information(client, "mewtwo")
+    assert isinstance(res, BasicInfo)
+    assert res.name == "mewtwo"
+    assert res.habitat == "rare"
+    assert res.is_legendary is True
+
+
+def test_basic_endpoint(client: TestClient, mock_pokeapi: MockRouter) -> None:
     """Tests basic endpoint behaviour."""
     res = client.get("/pokemon/mewtwo")
+    # mock.assert_called_once()
     assert res.status_code == 200
-    assert res.json() == {
-        "name": "mewtwo",
-        "description": "It was created by\na scientist after\nyears of horrific\x0c"
-        "gene splicing and\nDNA engineering\nexperiments.",
-        "habitat": "rare",
-        "isLegendary": True,
-    }
+    assert res.json()["name"] == "mewtwo"
+    assert res.json()["habitat"] == "rare"
+    assert res.json()["isLegendary"] is True
 
 
-def test_basic_endpoint_error(client: TestClient) -> None:
+def test_basic_endpoint_error(client: TestClient, mock_pokeapi: MockRouter) -> None:
     """Tests basic endpoint behaviour."""
     res = client.get("/pokemon/asdasd")
     assert res.status_code == 404
