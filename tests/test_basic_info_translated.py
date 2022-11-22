@@ -16,21 +16,12 @@ def client() -> Generator[TestClient, None, None]:
 
 def test_basic_endpoint(client: TestClient) -> None:
     """Tests basic endpoint behaviour."""
-    res = client.get("/pokemon/mewtwo")
+    res = client.get("/pokemon/translated/mew")
     assert res.status_code == 200
     assert res.json() == {
-        "name": "mewtwo",
-        "description": "It was created by\na scientist after\nyears of horrific\x0c"
-        "gene splicing and\nDNA engineering\nexperiments.",
+        "name": "mew",
+        "description": "So rare yond 't is still did doth sayeth to beest "
+        "a mirage by many experts. Only a few people hath't seen 't worldwide.",
         "habitat": "rare",
-        "isLegendary": True,
-    }
-
-
-def test_basic_endpoint_error(client: TestClient) -> None:
-    """Tests basic endpoint behaviour."""
-    res = client.get("/pokemon/asdasd")
-    assert res.status_code == 404
-    assert res.json() == {
-        "detail": "Not Found",
+        "isLegendary": False,
     }

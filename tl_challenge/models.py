@@ -1,4 +1,5 @@
 """Here the models are defined."""
+import random
 from typing import Any
 
 from pydantic import BaseModel
@@ -21,9 +22,16 @@ class BasicInfo(BaseModel):
     @classmethod
     def from_pokeapi_response(cls, res: dict[str, Any]) -> "BasicInfo":
         """Builds the object directly from the pokeapi response body."""
+        english_descriptions: list[str] = [
+            r["flavor_text"]
+            for r in res["flavor_text_entries"]
+            if r["language"]["name"] == "en"
+        ]
+        if not english_descriptions:
+            raise ValueError("No english translation found.")
         return cls(
             name=res["name"],
-            description=res["flavor_text_entries"][0]["flavor_text"],
+            description=random.choice(english_descriptions),
             habitat=res["habitat"]["name"],
             is_legendary=res["is_legendary"],
         )

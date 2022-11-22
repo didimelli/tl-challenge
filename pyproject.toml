@@ -9,8 +9,8 @@ packages = [{include = "tl_challenge"}]
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = "^0.87.0"
-trio = "^0.22.0"
 httpx = "^0.23.1"
+uvicorn = "^0.20.0"
 
 
 [tool.poetry.group.dev.dependencies]

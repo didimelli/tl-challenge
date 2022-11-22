@@ -1,0 +1,4 @@
+- dockerfile
+- mock external api in test
+- sanitize description string?
+- make sure to use english description, not just the first
