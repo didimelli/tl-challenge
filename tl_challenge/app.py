@@ -42,7 +42,7 @@ async def get_translated_description(
     return None
 
 
-@app.get("/pokemon/{pokemon_name}")
+@app.get("/pokemon/{pokemon_name}", response_model=BasicInfo)
 async def get_basic_pokemon_information(pokemon_name: str):
     """Given `pokemon_name`, returns standard description and some additional
     information."""
@@ -56,7 +56,7 @@ async def get_basic_pokemon_information(pokemon_name: str):
             raise HTTPException(status_code=e.response.status_code) from e
 
 
-@app.get("/pokemon/translated/{pokemon_name}")
+@app.get("/pokemon/translated/{pokemon_name}", response_model=BasicInfoTranslated)
 async def get_basic_pokemon_information_translated(
     pokemon_name: str,
 ) -> BasicInfoTranslated:
