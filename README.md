@@ -2,7 +2,7 @@
 
 The app spins up a rest api with the endpoints requested in the challenge pdf. At the route `/docs` there is a `Swagger UI`, while at `/redoc` there is an alternative documentation made with `redoc`.
 
-The app has been developed with (modern) Python for simplicity and because I am familiar with the language and the ecosystem.
+The app has been developed with (modern) Python for simplicity and because I am familiar with the language and the ecosystem. I used the extremely good [`fastapi`](https://github.com/tiangolo/fastapi) framework for its very simple sintax, out-of-the-box performance and automatic validation (enforced by [`pydantic`](https://github.com/pydantic/pydantic)).
 
 All the codebase is type hinted and leverages `async/await` for concurrency.
 
