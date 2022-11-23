@@ -1,5 +1,4 @@
-- [ ] dedicated error whenm e.g. 404 is given by 3rd party api
-- [ ] add readme
+- [x] add readme
 - [x] dockerfile
 - [x] ci with actions
 - [x] mock external api in test
